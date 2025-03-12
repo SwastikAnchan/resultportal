@@ -8,6 +8,7 @@ function App() {
   const [role, setRole] = useState("student");
   const [adminLoggedIn, setAdminLoggedIn] = useState(false);
   const [lecturerLoggedIn, setLecturerLoggedIn] = useState(false);
+  const [lecturerName, setLecturerName] = useState(''); // New state for lecturer name
   const [results, setResults] = useState([]);
   const [pendingMarks, setPendingMarks] = useState([]);
   const [dashboardData, setDashboardData] = useState({});
@@ -167,6 +168,7 @@ function App() {
       if (res.data.success) {
         localStorage.setItem("lecturerToken", res.data.token);
         setLecturerLoggedIn(true);
+        setLecturerName(res.data.name); // Set the lecturer name
         setError(null);
       } else {
         setError("Invalid credentials");
@@ -710,7 +712,8 @@ function App() {
         {/* Lecturer Dashboard */}
         {role === "lecturer" && lecturerLoggedIn && (
           <section className="dashboard-section">
-            <h2 className="section-title">Lecturer Dashboard</h2>
+          <center> <h2 className="section-title">Lecturer Dashboard</h2></center> 
+            <center><h5 className="section-title">Welcome {lecturerName}!!</h5></center>
             <div className="dashboard-stats">
               <p>
                 Submitted Marks: {dashboardData.submittedMarks?.length || 0}

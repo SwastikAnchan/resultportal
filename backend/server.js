@@ -64,8 +64,10 @@ const SessionalMarks = mongoose.model('SessionalMarks', sessionalMarksSchema);
 const authenticateLecturer = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Unauthorized' });
-  jwt.verify(token, 'secret-key', (err, lecturer) => {
+  jwt.verify(token, 'secret-key', async (err, decoded) => {
     if (err) return res.status(403).json({ message: 'Invalid token' });
+    const lecturer = await Lecturer.findById(decoded.id);
+    if (!lecturer) return res.status(404).json({ message: 'Lecturer not found' });
     req.lecturer = lecturer;
     next();
   });
@@ -92,10 +94,10 @@ const setupDefaultLecturers = async () => {
     const lecturerCount = await Lecturer.countDocuments();
     if (lecturerCount === 0) {
       const lecturers = [
-        { email: "shridevi@college.com", password: await bcrypt.hash("password1", 10), name: "Shridevi", lecturerId: "L001" },
-        { email: "rajesh@college.com", password: await bcrypt.hash("password2", 10), name: "Rajesh", lecturerId: "L002" },
-        { email: "subramanya@college.com", password: await bcrypt.hash("password3", 10), name: "Subramanya", lecturerId: "L003" },
-        { email: "vinoda@college.com", password: await bcrypt.hash("password4", 10), name: "Vinoda", lecturerId: "L004" },
+        { email: "shridevi@college.com", password: await bcrypt.hash("password1", 10), name: "Shridevi M", lecturerId: "L001" },
+        { email: "rajesh@college.com", password: await bcrypt.hash("password2", 10), name: "Rajesh B S", lecturerId: "L002" },
+        { email: "subramanya@college.com", password: await bcrypt.hash("password3", 10), name: "Subramanya B", lecturerId: "L003" },
+        { email: "vinoda@college.com", password: await bcrypt.hash("password4", 10), name: "Vinoda Naik", lecturerId: "L004" },
       ];
       await Lecturer.insertMany(lecturers);
       console.log("Default lecturers created successfully");
@@ -189,7 +191,7 @@ app.post('/lecturer/login', async (req, res) => {
     return res.json({ success: false, message: 'Invalid credentials' });
   }
   const token = jwt.sign({ id: lecturer._id }, 'secret-key', { expiresIn: '1h' });
-  res.json({ success: true, token });
+  res.json({ success: true, token, name: lecturer.name }); // Return lecturer's name
 });
 
 app.post('/lecturer/sessional/add', authenticateLecturer, async (req, res) => {
