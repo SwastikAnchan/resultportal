@@ -339,78 +339,92 @@ function App() {
       <main className="main-content">
         {error && <div className="error-message">{error}</div>}
 
-        {/* Student Dashboard */}
-        {role === "student" && (
-          <section className="dashboard-section">
-            <h2 className="section-title">Student Dashboard</h2>
-            <form className="form-container" onSubmit={handleStudentSubmit}>
-              <input
-                className="input-field"
-                placeholder="Register Number"
-                value={studentForm.registerNumber}
-                onChange={(e) =>
-                  setStudentForm({
-                    ...studentForm,
-                    registerNumber: e.target.value,
-                  })
-                }
-              />
-              <input
-                className="input-field"
-                placeholder="Semester (optional)"
-                value={studentForm.semester}
-                onChange={(e) =>
-                  setStudentForm({ ...studentForm, semester: e.target.value })
-                }
-              />
-              <button className="submit-btn" type="submit">
-                View Results
-              </button>
-            </form>
-            {results.length > 0 ? (
-              <div className="results-container">
-                <h3 className="subtitle">Your Results</h3>
+      {/* student dasboard */}
+          {role === "student" && (
+            <section className="dashboard-section">
+              <h2 className="section-title">Student Dashboard</h2>
+              <form className="form-container" onSubmit={handleStudentSubmit}>
+                <input
+            className="input-field"
+            placeholder="Register Number"
+            value={studentForm.registerNumber}
+            onChange={(e) =>
+              setStudentForm({
+                ...studentForm,
+                registerNumber: e.target.value,
+              })
+            }
+                />
+                <input
+            className="input-field"
+            placeholder="Semester (optional)"
+            value={studentForm.semester}
+            onChange={(e) =>
+              setStudentForm({ ...studentForm, semester: e.target.value })
+            }
+                />
+                <button className="submit-btn" type="submit">
+            View Results
+                </button>
+              </form>
+              {results.length > 0 ? (
+                <div className="results-container">
+            <h3 className="subtitle">Your Results</h3>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Semester</th>
+                  <th>Subject</th>
+                  <th>Marks</th>
+                  <th>Total Marks</th>
+                  <th>Percentage</th>
+                  <th>Status</th>
+                  <th>Attendance</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
                 {results.map((result) => (
-                  <div key={result._id} className="result-card">
-                    <p>Semester: {result.semester}</p>
-                    <ul>
-                      {result.subjects.map((subject, index) => (
-                        <li key={index}>
-                          {subject.subjectName}: {subject.marks}/100
-                        </li>
-                      ))}
-                    </ul>
-                    {result.subjects.length === 4 ? (
-                      <>
-                        <p>Total: {result.totalMarks}/400</p>
-                        <p>Percentage: {result.percentage}%</p>
-                        <p>Status: {result.status}</p>
-                        <p>
-                          Attendance: {result.attendancestatus}
-                        </p>
-                        <button
-                          className="action-btn"
-                          onClick={() => generatePDF(result)}
-                        >
-                          Download PDF
-                        </button>
-                      </>
-                    ) : (
-                      <p>
-                        Result incomplete: Waiting for all 4 subjects to be
-                        approved.
-                      </p>
-                    )}
-                  </div>
+                  <tr key={result._id}>
+              <td>{result.semester}</td>
+              <td>
+                <ul>
+                  {result.subjects.map((subject, index) => (
+                    <li key={index}>{subject.subjectName}</li>
+                  ))}
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  {result.subjects.map((subject, index) => (
+                    <li key={index}>{subject.marks}/100</li>
+                  ))}
+                </ul>
+              </td>
+              <td>{result.totalMarks}/400</td>
+              <td>{result.percentage}%</td>
+              <td>{result.status}</td>
+              <td>{result.attendancestatus}</td>
+              <td>
+                <button
+                  className="action-btn"
+                  onClick={() => generatePDF(result)}
+                >
+                  Download PDF
+                </button>
+              </td>
+                  </tr>
                 ))}
-              </div>
-            ) : (
-              <p>No results available yet.</p>
-            )}
-          </section>
-        )}
+              </tbody>
+            </table>
+                </div>
+              ) : (
+                <p>No results available yet.</p>
+              )}
+            </section>
+          )}
 
-        {/* Admin Login */}
+          {/* Admin Login */}
         {role === "admin" && !adminLoggedIn && (
           <section className="dashboard-section">
             <h2 className="section-title">Admin Login</h2>
@@ -821,9 +835,9 @@ function App() {
                   }
                 >
                   <option value="">Select Sessional Type</option>
-                  <option value="Sessional 1">Sessional 1</option>
-                  <option value="Sessional 2">Sessional 2</option>
-                  <option value="Sessional 3">Sessional 3</option>
+                  <option value="IA 1">Sessional 1</option>
+                  <option value="IA 1">Sessional 2</option>
+                  <option value="IA 1">Sessional 3</option>
                 </select>
 
                 <input
