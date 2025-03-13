@@ -61,6 +61,7 @@ function App() {
       setPendingMarks(pendingRes.data || []);
       const resultsRes = await axios.post("/api/results/view", {
         registerNumber: "",
+        semester: "",
       });
       setResults(Array.isArray(resultsRes.data) ? resultsRes.data : []);
       setError(null);
@@ -90,16 +91,16 @@ function App() {
 
   // Handlers
   const handleStudentSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("/api/results/view", studentForm);
-      setResults(Array.isArray(res.data) ? res.data : []);
-      fetchStudentDashboard(studentForm.registerNumber);
-      setError(null);
-    } catch {
-      setError("No results found");
-    }
-  };
+      e.preventDefault();
+      try {
+        const res = await axios.post("/api/results/view", studentForm);
+        setResults(Array.isArray(res.data) ? res.data : []);
+        await fetchStudentDashboard(studentForm.registerNumber);
+        setError(null);
+      } catch {
+        setError("No results found");
+      }
+    };
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -158,7 +159,7 @@ function App() {
         setError("Failed to upload CSV");
       }
     };
-    reader.readAsDataURL(bulkFile);
+    reader.readAsText(bulkFile);
   };
 
   const handleLecturerLogin = async (e) => {
@@ -216,38 +217,6 @@ function App() {
     }
   };
 
-  // const generatePDF = (result) => {
-  //   if (!result) {
-  //     console.error("Result data is missing");
-  //     return;
-  //   }
-
-    // const doc = new jsPDF();
-    // const pageWidth = doc.internal.pageSize.getWidth();
-
-    // // Header
-    // doc.setFontSize(18);
-    // doc.text("N.R.A.M Polytechnic, Nitte", pageWidth / 2, 10, { align: "center" });
-    // doc.setFontSize(14);
-    // doc.text("Result Details", pageWidth / 2, 20, { align: "center" });
-
-    // // Student Info
-    // doc.setFontSize(12);
-    // doc.text(`Name: ${result.name}`, 10, 30);
-    // doc.text(`Register Number: ${result.registerNumber}`, 10, 40);
-    // doc.text(`Semester: ${result.semester}`, 10, 50);
-    // doc.text(`Branch: ${result.branch}`, 10, 60);
-
-    // // Subject Table
-    // const tableData = result.subjects.map((subject) => [subject.subjectName, subject.marks]);
-    // doc.autoTable({
-    //   head: [["Subject", "Marks"]],
-    //   body: tableData,
-    //   startY: 70,
-    //   theme: "striped",
-    //   styles: { fontSize: 11 },
-    //   headStyles: { fillColor: [41, 128, 185], textColor: 255 }, // Blue Header
-    // });
 
     const generatePDF = (result) => {
       if (!result) {
@@ -305,7 +274,7 @@ function App() {
         subject.subjectName,
         '100',
         subject.marks,
-        subject.marks >= 40 ? 'P' : 'F'
+        subject.marks >= 40 ? 'Pass' : 'Fail'
           ];
         }),
         styles: { fontSize: 10, cellPadding: 2 },
@@ -327,7 +296,7 @@ function App() {
           ['Total Marks Obtained', result.totalMarks],
           ['Percentage', `${result.percentage}%`],
           ['Overall Result', result.status],
-          ['Attendance Percentage', `${result.attendance}%`],
+          ['Attendance Percentage', `${result.attendancePercentage}%`],
           ['Attendance Status', result.attendancestatus]
         ],
         styles: { fontSize: 12, cellPadding: 2 },

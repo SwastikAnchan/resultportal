@@ -124,7 +124,7 @@ app.post('/admin/login', (req, res) => {
 app.post('/results/bulk-upload', async (req, res) => {
   const { csvData } = req.body;
   const results = [];
-  const totalDays = 100; // Assuming total days is a constant for calculation
+   const totalDays = 88; // Assuming total days  // 4 months * 22 working days
   const stream = Readable.from(Buffer.from(csvData, 'base64'));
   stream
     .pipe(csv())
@@ -254,6 +254,7 @@ app.put('/admin/sessional/approve/:id', async (req, res) => {
         subjects,
         totalMarks,
         percentage,
+        attendancePercentage: attendance,
         status: percentage >= 40 ? 'Pass' : 'Fail',
         attendancestatus,
       },
